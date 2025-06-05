@@ -17,7 +17,7 @@ last_modified_at:
 - 라이브러리  
 필요한 기능을 호출해서 사용하는 코드 집합  
 흐름의 제어권은 개발자에게 있음  
-예: Lombok, JPA, Jackson, JavaScript의 Axios, Lodash  
+예: Lombok, JPA, Jackson, JavaScript의 Axios
 
 - 프레임워크  
 전체 애플리케이션 구조를 제공  
