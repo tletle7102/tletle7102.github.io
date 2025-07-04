@@ -104,7 +104,7 @@ public class UserService {
 
 ##### ✅ 실생활 비유
 - ApplicationContext: 카페 매장, 전체 운영 관리  
-- SecurityContext: 직원 배지, 역할 확인  
+- SecurityContext: 직원 배지 관리장부, 역할 확인  
 - PersistenceContext: 주문 노트, 주문 처리  
 
 ##### ✅ 코드 관점
