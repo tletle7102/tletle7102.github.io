@@ -1,58 +1,85 @@
-<div class="form  form--search">
+<div class="form form--search">
   <form id="contact-form" action="">
-    <label class="label" for="search">Search term:</label>
-    <input class="input" id="search" type="search" name="search" placeholder="e.g. About us" autocomplete="off" />
-
-    <ul class="list  list--results" id="list">
+    <label class="label" for="search" style="display: inline-block; margin-right: 10px;">Search term:</label> <!-- 레이블 한 줄 고정: 레이블/입력 한 줄 깨짐 → flex 스타일로 한 줄 배치 -->
+    <input class="input" id="search" type="search" name="search" placeholder="e.g. About us" autocomplete="off" style="width: 300px;" /> <!-- 입력 폭 조정 -->
+    <button type="submit" class="button" style="margin-left: 10px;">Search</button> <!-- 버튼 추가: 입력 필드만 있음 → 버튼 추가 -->
+    <ul class="list list--results" id="list" style="margin-top: 20px;"> <!-- 결과 목록 아래쪽으로 -->
         <!-- results go here -->
     </ul>
   </form>
 </div>
-
+<style>
+  #contact-form { 
+    position: sticky; /* 폼 위쪽 고정: 결과 나오면 폼 이동 → 폼 sticky 고정. 결과 아래 배치 */
+    top: 0; 
+    background: white; /* 배경 흰색으로 고정 시 가려지지 않게 */
+    padding: 10px; 
+    z-index: 10; /* 다른 요소 위에 표시 */
+    border-bottom: 1px solid #ccc; /* 시각적 구분 */
+  }
+  .item--result p { /* 요약 3줄: excerpt 전체 표시 → excerpt 150자 + "..." (CSS로 3줄 제한 + ellipsis) */
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* 3줄만 표시 */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis; /* 넘치면 "..." 표시 */
+  }
+</style>
 <script type="text/javascript" src="{{ "/assets/scripts/fetch.js" | relative_url }}"></script>
 <script type="text/javascript">
   const endpoint = '{{ "/assets/search.json" | relative_url }}';
-
-  const pages = [];
-
+  let pages = []; // pages를 빈 배열로 초기화
   fetch(endpoint)
     .then(blob => blob.json())
-    .then(data => pages.push(...data))
-
+    .then(data => {
+      pages = data || []; // 데이터가 null이면 빈 배열로 설정
+      console.log('Search data loaded successfully. Total pages: ' + pages.length); // 성공 로그 (디버깅용)
+    })
+    .catch(error => {
+      console.error('Failed to load search data:', error); // 실패 로그
+      resultsList.innerHTML = `<p>Search data load failed. Please refresh or check console.</p>`; // UI 에러 표시
+    });
   function findResults(termToMatch, pages) {
     return pages.filter(item => {
+      if (!item) return false; // TypeError 방지: null 체크 없음 → item/title/content null 체크
       const regex = new RegExp(termToMatch, 'gi');
-      return item.title.match(regex) || item.content.match(regex);
+      const titleMatch = item.title ? item.title.match(regex) : false; // TypeError 방지: null 체크
+      const contentMatch = item.content ? item.content.match(regex) : false; // TypeError 방지: null 체크
+      return titleMatch || contentMatch;
     });
   }
-
-  function displayResults() {
-    const resultsArray = findResults(this.value, pages);
+  function displayResults(searchValue) {
+    const resultsArray = findResults(searchValue, pages);
     const html = resultsArray.map(item => {
+      let excerpt = item.excerpt || ''; // TypeError 방지: null 체크
+      if (excerpt.length > 150) {
+        excerpt = excerpt.substring(0, 150) + "..."; // 요약 3줄: excerpt 전체 표시 → excerpt 150자 + "..."
+      }
       return `
-        <li class="item  item--result">
-          <article class="article  typeset">
-            <h4><a href="${item.url}">${item.title}</a></h4>
-            <p>${item.excerpt}</p>
+        <li class="item item--result">
+          <article class="article typeset">
+            <h4><a href="${item.url}">${item.title || 'Untitled'}</a></h4> <!-- TypeError 방지: title null 체크 -->
+            <p>${excerpt}</p>
           </article>
         </li>`;
     }).join('');
-    if ((resultsArray.length == 0) || (this.value == '')) {
+    if ((resultsArray.length == 0) || (searchValue == '')) {
       resultsList.innerHTML = `<p>Sorry, nothing was found</p>`;
     } else {
       resultsList.innerHTML = html;
     }
   }
-
   const field = document.querySelector('#search');
   const resultsList = document.querySelector('#list');
-
-  field.addEventListener('keyup', displayResults);
-
-  field.addEventListener('keydown', function(event) {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-    }
+  const form = document.querySelector('#contact-form');
+  // 실시간 검색 (keyup 이벤트)
+  field.addEventListener('keyup', function() {
+    displayResults(this.value);
+  });
+  // 폼 제출 이벤트 (버튼 클릭 또는 Enter 키)
+  form.addEventListener('submit', function(event) {
+    event.preventDefault(); // 버튼/Enter 추가 및 새로고침 방지: keyup만 기능 Enter 막힘 → submit 이벤트 추가 Enter 통합
+    displayResults(field.value); // 검색 결과 업데이트
   });
 </script>
 <noscript>Please enable JavaScript to use the search form.</noscript>
