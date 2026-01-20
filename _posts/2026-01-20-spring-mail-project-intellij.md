@@ -31,21 +31,25 @@ last_modified_at:
 
 #### 구현하기
 
+##### Gradle 기반 스프링부트 프로젝트 생성
+
+![spring mail project intelliJ 1](/assets/images/2026-01-20-spring-mail-project-intelliJ-1.png)
+![spring mail project intelliJ 2](/assets/images/2026-01-20-spring-mail-project-intelliJ-2.png)
+
 ##### .gitignore에 .env와 *.env를 등록  
 
-<img width="792" height="501" src="https://github.com/user-attachments/assets/6d79e1c3-ccd9-470f-8588-47226593280e" />  
+![spring mail project intelliJ 3](/assets/images/2026-01-20-spring-mail-project-intelliJ-3.png)
 
 프로젝트 루트 디렉토리에 있는 .gitignore에 .env와 *.env를 등록하여 github에 환경변수 파일에 대한 작업내용이 올라가지 않게 조치
 
 ##### 환경변수 파일(.env) 만들기
 
-<img width="813" height="457" src="https://github.com/user-attachments/assets/9ad84c1a-b211-45bd-8efa-4691a2c1e1f5" />   
+![spring mail project intelliJ 4](/assets/images/2026-01-20-spring-mail-project-intelliJ-4.png)
+ 
   
 환경변수 파일(.env) 만들고, 메일 기능에 필요한 환경변수값 입력
 
 ##### 의존성 넣기
-
-<img width="792" height="712" src="https://github.com/user-attachments/assets/e738fceb-37c7-4994-8cd4-10aabc3586e4" />  
 
 Java 21 기준으로 진행함  
 메일 전송, 롬복, 타임리프를 같이 쓸 예정임  
@@ -101,6 +105,8 @@ bootRun {
 메일 서버 연결을 위해 application.yml 에 설정을 넣어야 함  
 사용할 SMTP 서비스에 맞게 host, port, 계정 정보를 채워야 함  
 
+![spring mail project intelliJ 4.5](/assets/images/2026-01-20-spring-mail-project-intelliJ-4.5.png)
+
 ```yml
 spring:  
   mail:  
@@ -126,8 +132,6 @@ SimpleMailMessage의 경우는 간단한 텍스트 기반의 이메일을 보내
 MimeMessage의 경우는 HTML, 텍스트, 멀티파트, 첨부 파일 등 고급 기능을 이용하는 데 사용되는 용도
 
 ##### DTO 생성
-
-<img width="981" height="308" alt="Image" src="https://github.com/user-attachments/assets/13cc5c8f-a3d4-456d-8a1b-4a28c801e159" />
 
 컨트롤러에서 요청을 받을 때 사용할 DTO 를 하나 만듦  
 필드는 최소한으로만 두고 시작함  
@@ -320,19 +324,19 @@ public class MailController {
 - POST 요청으로 폼에서 입력한 값 전달  
 - 컨트롤러에서 서비스 호출해서 메일 전송  
 
-이 부분은 실제 템플릿을 만들고 나서 따로 정리해서 아래에 더 적을 예정임
+![spring mail project intelliJ 5](/assets/images/2026-01-20-spring-mail-project-intelliJ-5.png)
 
-<img width="1047" height="554" alt="Image" src="https://github.com/user-attachments/assets/7669d9af-c6b9-479e-946f-2b49fb357f21" />
 
 ##### 실행
 
 터미널로 `./gradlew bootRun` 라고 실행해야 함
 (.env 파일을 읽는 명령어 스크립트가 build.gradle에 있기에 터미널로 `./gradlew bootRun` 명령어를 실행)
 
-<img width="712" height="120" alt="Image" src="https://github.com/user-attachments/assets/07657a85-89dd-4d59-97f5-f5f82d84f692" />
-<img width="532" height="48" alt="Image" src="https://github.com/user-attachments/assets/887bf43b-3443-4c45-9370-68ff741bdf41" />
+![spring mail project intelliJ 6](/assets/images/2026-01-20-spring-mail-project-intelliJ-6.png)
+![spring mail project intelliJ 7](/assets/images/2026-01-20-spring-mail-project-intelliJ-7.png)
+
 
 ##### Postman으로 API 요청 & 응답
-<img width="603" height="231" alt="Image" src="https://github.com/user-attachments/assets/953faae0-789b-4323-8c7e-7d83e9a1855a" />
-<img width="457" height="156" alt="Image" src="https://github.com/user-attachments/assets/bbc1c278-eefc-438d-8785-395169ed7f8f" />
-<img width="324" height="485" alt="Image" src="https://github.com/user-attachments/assets/8e1745ef-ec6b-46fc-9059-91ff06c20187" />
+![spring mail project intelliJ 8](/assets/images/2026-01-20-spring-mail-project-intelliJ-8.png)
+![spring mail project intelliJ 9](/assets/images/2026-01-20-spring-mail-project-intelliJ-9.png)
+![spring mail project intelliJ 10](/assets/images/2026-01-20-spring-mail-project-intelliJ-10.png)
