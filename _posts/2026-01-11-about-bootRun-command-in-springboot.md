@@ -1,3 +1,12 @@
+---
+title: "기본 용어 개념 정리 문서"
+categories:
+  - cs
+tags:
+  - cs
+last_modified_at:
+---
+
 # 기본 용어 개념 정리 문서
 
 1. 로컬 (Local)  
