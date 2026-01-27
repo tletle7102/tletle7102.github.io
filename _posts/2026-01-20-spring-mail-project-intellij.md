@@ -23,7 +23,7 @@ last_modified_at:
 - Gradle 기반 스프링부트 프로젝트 생성
 - .gitignore에 .env와 *.env를 등록  
 - 환경변수 파일(.env) 만들기
-- 메일, 롬복, 타임리프 의존성 추가  
+- 메일, 롬복, 타임리프 의존성 추가 및 환경변수 로드 스크립트 추가  
 - application.yml 설정 값 넣기  
 - DTO 클래스 만들기  
 - 서비스 클래스 만들기  
@@ -46,7 +46,6 @@ last_modified_at:
 
 ![spring mail project intelliJ 4](/assets/images/2026-01-20-spring-mail-project-intelliJ-4.png)
  
-  
 환경변수 파일(.env) 만들고, 메일 기능에 필요한 환경변수값 입력
 
 ##### 의존성 넣기
@@ -77,11 +76,15 @@ def loadEnv() {
                 def (key, value) = line.split('=', 2)
                 if (System.getenv(key.trim()) == null) {
                     // 환경변수가 설정되지 않은 경우에만 .env 값 사용
+                    System.setProperty(key.trim(), value.trim())
                 }
             }
         }
     }
 }
+
+// 빌드 스크립트 실행 시 환경변수 로드
+loadEnv()
 
 bootRun {
     def envFile = file('.env')
@@ -146,8 +149,8 @@ MimeMessage의 경우는 HTML, 텍스트, 멀티파트, 첨부 파일 등 고급
 
 ```java
 @Getter
-public class MailTxtDto {
-    private String mailAddr;
+public class MailTxtSendDto {
+    private String emailAddr;
     private String subject;
     private String content;
 }
@@ -199,12 +202,12 @@ public class MailSendService {
     /**
      * 텍스트 기반 메일 전송(SimpleMailMessage)
      */
-    public void sendSimpleMailMessage(MailTxtDto mailTxtDto) {
+    public void sendSimpleMailMessage(MailTxtSendDto mailTxtSendDto) {
         SimpleMailMessage smm = new SimpleMailMessage();
 
-        smm.setTo(mailTxtDto.getMailAddr());
-        smm.setSubject(mailTxtDto.getSubject());
-        smm.setText(mailTxtDto.getContent());
+        smm.setTo(mailTxtSendDto.getEmailAddr());
+        smm.setSubject(mailTxtSendDto.getSubject());
+        smm.setText(mailTxtSendDto.getContent());
 
         try {
             mailSender.send(smm);
@@ -251,8 +254,6 @@ POST 요청으로 DTO 를 받게 하고, 서비스 메서드를 호출해서 메
 - 성공 여부는 일단 단순한 문자열이나 상태 코드 정도로 응답함  
 
 ```java
-package com.example.springbootmail1;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailException;
@@ -278,9 +279,10 @@ public class MailController {
      */
     @PostMapping("/send/txt")
     public ResponseEntity<?> sendTextMail(
-            @RequestBody MailTxtDto mailTxtDto) {
+            @RequestBody MailTxtSendDto mailTxtSendDto
+    ) {
         try {
-            mailSendService.sendSimpleMailMessage(mailTxtDto);
+            mailSendService.sendSimpleMailMessage(mailTxtSendDto);
             return ResponseEntity.ok(
                 Map.of("message", "메일 전송 완료")
             );
