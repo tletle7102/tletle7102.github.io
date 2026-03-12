@@ -1,3 +1,14 @@
+---
+title: "인텔리제이로 스프링부트 예외처리(Exception Handling) 구현하기"
+categories:
+  - Spring Boot
+tags:
+  - Spring Boot
+  - Postman
+  - Exception
+last_modified_at:
+---
+
 # 인텔리제이로 스프링부트 예외처리(Exception Handling) 구현하기
 
 Spring Boot에서 전역 예외 처리 구조를 구현하여 일관된 에러 응답을 반환하는 방법을 정리함
